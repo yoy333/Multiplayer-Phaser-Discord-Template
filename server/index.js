@@ -7,18 +7,20 @@ import http from 'http'
 const server = new http.Server(app);
 const { JSDOM } = jsdom;
 
+console.log(0)
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+console.log(__filename)
+console.log(__dirname);
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
   console.log(1)
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
-server.listen(8082, function () {
-  console.log(`Listening on ${server.address().port}`);
-});
+console.log(__dirname + '/public/index.html')
 
 function setupAuthoritativePhaser() {
   JSDOM.fromFile(path.join(__dirname, 'authoritative_server/index.html'), {
@@ -29,10 +31,11 @@ function setupAuthoritativePhaser() {
     // So requestAnimatinFrame events fire
     pretendToBeVisual: true
   }).then((dom) => {
+    console.log(2)
     dom.window.gameLoaded = () => {
-      const PORT = 8081;
+      console.log(3)
+      const PORT = 8082;
       server.listen(PORT, function () {
-          console.log(flag)
           console.log(`Listening on ${PORT}`);
       });
     };
@@ -40,4 +43,4 @@ function setupAuthoritativePhaser() {
     console.log(error.message);
   });
 }
-//setupAuthoritativePhaser();
+setupAuthoritativePhaser();
