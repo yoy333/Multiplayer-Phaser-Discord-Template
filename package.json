@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/index.js",
-    "build": "rm -rf /server/public/js/* && cd server/src/ts/ && tsc"
+    "build": "rm -rf ./server/public/js/* && cd ./server/public/ts/ && tsc"
   },
   "keywords": [],
   "author": "",
