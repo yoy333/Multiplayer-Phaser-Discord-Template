@@ -1,6 +1,5 @@
-import * as Phaser from './phaser.esm.min.js'
-//import Phaser from 'phaser'
-var config = {
+import Phaser from 'phaser'
+var config : Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
   width: 800,
@@ -11,7 +10,6 @@ var config = {
     update: update
   }
 };
-console.log(Phaser.Math)
 var game = new Phaser.Game(config);
 function preload() {}
 function create() {}

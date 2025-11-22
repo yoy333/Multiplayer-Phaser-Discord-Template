@@ -7,7 +7,7 @@
 
     "allowJs": true,
     //"checkJs": true,
-    // "typeRoots": ["./node_modules/@types", "./typings"],
+    "typeRoots": ["../../../node_modules/@types", "../../../node_modules/phaser/types"],
     "esModuleInterop": true,
 
     // Environment Settings
@@ -16,7 +16,7 @@
     "target": "esnext",
     //"types": [],  
     // For nodejs:
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "types": ["node", "express", "phaser"],
     // and npm install -D @types/node
 
