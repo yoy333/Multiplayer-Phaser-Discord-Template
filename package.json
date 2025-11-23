@@ -6,7 +6,9 @@
   "scripts": {
     "restart": "npm run build && npm run start",
     "start": "node server/index.js",
-    "build": "cd server/public && vite build"
+    "build-client": "cd server/public && vite build",
+    "build-server": "cd server/authoritative_server && vite build",
+    "build": "npm run build-client && npm run build-server"
   },
   "keywords": [],
   "author": "",

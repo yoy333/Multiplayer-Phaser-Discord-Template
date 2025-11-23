@@ -19,17 +19,25 @@ app.get('/', function (req, res) {
 });
 
 function setupAuthoritativePhaser() {
+  const { VirtualConsole } = jsdom;
+  const virtualConsole = new VirtualConsole();
+  virtualConsole.on('log', (...args) => console.log('[jsdom log]', ...args));
+  virtualConsole.on('info', (...args) => console.info('[jsdom info]', ...args));
+  virtualConsole.on('warn', (...args) => console.warn('[jsdom warn]', ...args));
+  virtualConsole.on('error', (...args) => console.error('[jsdom error]', ...args));
+
   JSDOM.fromFile(path.join(__dirname, 'authoritative_server/index.html'), {
     // To run the scripts in the html file
     runScripts: "dangerously",
     // Also load supported external resources
     resources: "usable",
     // So requestAnimatinFrame events fire
-    pretendToBeVisual: true
+    pretendToBeVisual: true,
+    virtualConsole
   }).then((dom) => {
     dom.window.gameLoaded = () => {
       server.listen(PORT, function () {
-          console.log(`Listening on ${PORT}`);
+        console.log(`Listening on ${PORT}`);
       });
     };
   }).catch((error) => {
