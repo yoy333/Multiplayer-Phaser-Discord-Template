@@ -6,7 +6,7 @@
   "scripts": {
     "restart": "npm run build && npm run start",
     "start": "node server/index.js",
-    "build-client": "cd server/public && vite build",
+    "build-client": "cd server/client && vite build",
     "build-server": "cd server/authoritative_server && vite build",
     "build": "npm run build-client && npm run build-server"
   },
@@ -15,10 +15,14 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@types/socket.io": "^3.0.1",
+    "@types/socket.io-client": "^1.4.36",
     "canvas": "^3.2.0",
     "express": "^5.1.0",
     "jsdom": "^27.1.0",
-    "phaser": "^3.90.0"
+    "phaser": "^3.90.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",

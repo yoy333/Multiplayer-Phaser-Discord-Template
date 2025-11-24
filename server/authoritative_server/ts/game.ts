@@ -1,5 +1,16 @@
 import Phaser from 'phaser'
+import { Server as SocketIOServer } from 'socket.io';
 
+
+// defined in index.js
+declare global {
+  interface Window {
+    gameLoaded: () => void;
+    io: SocketIOServer;
+  }
+}
+
+//const io = new SocketIOServer(window.server);
 const config : Phaser.Types.Core.GameConfig = {
   autoFocus: false,
   type: Phaser.HEADLESS,
@@ -21,14 +32,15 @@ const config : Phaser.Types.Core.GameConfig = {
 };
 
 function preload() {}
-function create() {}
+function create() {
+  window.io.on('connection', function (socket) {
+    console.log('a user connected');
+    socket.on('disconnect', function () {
+      console.log('user disconnected');
+    });
+  });
+}
 function update() {}
 const game = new Phaser.Game(config);
 
-// gameLoaded defined in index.js
-declare global {
-  interface Window {
-    gameLoaded: () => void; // tells the server to listen
-  }
-}
 window.gameLoaded();

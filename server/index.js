@@ -1,22 +1,46 @@
 import path from 'path'
 import { fileURLToPath } from 'url';
-import jsdom from 'jsdom'
 import express from 'express'
 const app = express();
+
 import http from 'http'
 const server = new http.Server(app);
+
+import { Server as SocketIOServer } from 'socket.io';
+const io = new SocketIOServer(server);
+
+import jsdom from 'jsdom'
 const { JSDOM } = jsdom;
+
 
 const PORT = 8080;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use(express.static(__dirname + '/public/dist/'));
+app.use(express.static(__dirname + '/client/dist/'));
+
+// Serve game-specific assets from `/game/*`
+const distDir = path.join(__dirname, 'client/dist');
+const gameAssetsDir = path.join(__dirname, 'client/game/scenes/assets');
+
+app.use('/phaserAssets', express.static(gameAssetsDir));
+
+// Serve the distributed site from the dist directory
+//app.use(express.static(distDir));
 
 app.get('/', function (req, res) {
-  console.log(__dirname)
-  res.sendFile(__dirname + '/public/dist/index.html');
+  console.log(__dirname);
+  res.sendFile(path.join(distDir, 'index.html'));
 });
+
+// SPA fallback: for any non-/game/* path, return dist index.html
+// app.get('*', (req, res) => {
+//   if (req.path.startsWith('/game/')) {
+//     // If a /game/* file wasn't found by the static middleware, return 404
+//     return res.status(404).send('Not found');
+//   }
+//   res.sendFile(path.join(distDir, 'index.html'));
+// });
 
 function setupAuthoritativePhaser() {
   const { VirtualConsole } = jsdom;
@@ -40,6 +64,7 @@ function setupAuthoritativePhaser() {
         console.log(`Listening on ${PORT}`);
       });
     };
+    dom.window.io = io;
   }).catch((error) => {
     console.log(error.message);
   });
