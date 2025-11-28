@@ -1,4 +1,5 @@
-import Phaser from 'phaser'
+//import Phaser from 'phaser'
+import {Game} from 'phaser'
 
 import { Boot } from './scenes/Boot.js'
 import { GameOver } from './scenes/GameOver.js';
@@ -20,4 +21,4 @@ var config : Phaser.Types.Core.GameConfig = {
         GameOver
     ]
 };
-var game = new Phaser.Game(config);
+var game = new Game(config);

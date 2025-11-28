@@ -1,6 +1,6 @@
-import Phaser from 'phaser'
+import Phaser, { Physics } from 'phaser'
 import { Server as SocketIOServer } from 'socket.io';
-
+import {Game} from './scenes/board'
 
 // defined in index.js
 declare global {
@@ -24,23 +24,11 @@ const config : Phaser.Types.Core.GameConfig = {
       gravity: {x:0, y: 0}
     }
   },
-  scene: {
-    preload: preload,
-    create: create,
-    update: update
-  }
+  scene: [
+    Game
+  ]
 };
 
-function preload() {}
-function create() {
-  window.io.on('connection', function (socket) {
-    console.log('a user connected');
-    socket.on('disconnect', function () {
-      console.log('user disconnected');
-    });
-  });
-}
-function update() {}
 const game = new Phaser.Game(config);
 
 window.gameLoaded();

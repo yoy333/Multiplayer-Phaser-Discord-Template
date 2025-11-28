@@ -12,7 +12,7 @@ export default ({ mode }) => {
     },
     build:{
       lib: {
-        entry: 'ts/game.ts',
+        entry: 'ts/main.ts',
         name: 'MyGame',
         formats: ['iife'],
         fileName: 'bundle'
