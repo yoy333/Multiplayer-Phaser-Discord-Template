@@ -1,6 +1,6 @@
 import Phaser, { Physics } from 'phaser'
 import { Server as SocketIOServer } from 'socket.io';
-import {Game} from './scenes/board'
+import {Board} from './scenes/board'
 
 // defined in index.js
 declare global {
@@ -25,7 +25,7 @@ const config : Phaser.Types.Core.GameConfig = {
     }
   },
   scene: [
-    Game
+    Board
   ]
 };
 
