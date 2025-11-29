@@ -26,6 +26,8 @@ export class Preloader extends Scene
         this.load.setPath('phaserAssets');
 
         this.load.image('ship', 'spaceShips_001.png');
+
+        this.load.image('otherPlayer', 'enemyBlack5.png');
     }
 
     create ()
