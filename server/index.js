@@ -42,6 +42,7 @@ app.get('/', function (req, res) {
 //   res.sendFile(path.join(distDir, 'index.html'));
 // });
 
+
 function setupAuthoritativePhaser() {
   const { VirtualConsole } = jsdom;
   const virtualConsole = new VirtualConsole();
@@ -59,7 +60,9 @@ function setupAuthoritativePhaser() {
     pretendToBeVisual: true,
     virtualConsole
   }).then((dom) => {
+    console.log("here")
     dom.window.gameLoaded = () => {
+      console.log('G Load')
       server.listen(PORT, function () {
         console.log(`Listening on ${PORT}`);
       });

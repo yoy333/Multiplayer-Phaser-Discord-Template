@@ -2,8 +2,7 @@ import { Scene } from 'phaser';
 import io, {type Socket} from 'socket.io-client'
 import {playerInfo} from '../../../common/SocketProtocols'
 
-export class Game extends Scene
-{
+export class Game extends Scene{
 
     socket: typeof Socket | null = null;
     playerGroup?:Phaser.GameObjects.Group
@@ -18,6 +17,12 @@ export class Game extends Scene
     }
 
     players?:Map<string, Phaser.GameObjects.Image>
+
+    cursors?:Phaser.Types.Input.Keyboard.CursorKeys
+    leftKeyPressed = false
+    rightKeyPressed = false
+    upKeyPressed = false
+
 
     create ()
     {
@@ -59,6 +64,58 @@ export class Game extends Scene
             this.scene.start('GameOver');
 
         });
+
+        this.socket.on('playerUpdates',  (players:playerInfo[])=>{
+            if(!this.players)
+                throw new Error("no players")
+            players.forEach( (info)=>{
+                if(!this.players)
+                        throw new Error("no players")
+                this.players.forEach(function (player, id) {
+                    if (info.id === id) {
+                        player.setRotation(info.rotation);
+                        player.setPosition(info.x, info.y);
+                    }
+                });
+            });
+        });
+
+        if(!this.input.keyboard)
+            throw new Error("no keyboard detected")
+        this.cursors = this.input.keyboard.createCursorKeys();
+
+        this.leftKeyPressed = false;
+        this.rightKeyPressed = false;
+        this.upKeyPressed = false;
+    }
+
+    update(){
+        const left = this.leftKeyPressed;
+        const right = this.rightKeyPressed;
+        const up = this.upKeyPressed;
+
+        if(!this.cursors)
+            throw new Error("no cursors")
+
+        if (this.cursors.left.isDown) {
+            this.leftKeyPressed = true;
+        } else if (this.cursors.right.isDown) {
+            this.rightKeyPressed = true;
+        } else {
+            this.leftKeyPressed = false;
+            this.rightKeyPressed = false;
+        }
+        if (this.cursors.up.isDown) {
+            this.upKeyPressed = true;
+        } else {
+            this.upKeyPressed = false;
+        }
+
+        if(!this.socket)
+            throw new Error("no socket")
+
+        if (left !== this.leftKeyPressed || right !== this.rightKeyPressed || up !== this.upKeyPressed)
+            this.socket.emit('playerInput', { left: this.leftKeyPressed , right: this.rightKeyPressed, up: this.upKeyPressed });
     }
 
     displayPlayers(playerI:playerInfo, sprite:string) {

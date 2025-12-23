@@ -1,3 +1,4 @@
+import { playerInfo, Input } from '../../../common/SocketProtocols';
 import {Board} from '../scenes/board'
 import { Server as SocketIOServer } from 'socket.io';
 
@@ -10,26 +11,45 @@ export class SocketServerManager{
         this.io = io
     }
 
-    startAcceptingConnection(){
-        window.io.on('connection',  (socket)=>{
+    managePlayerEntryExits(
+        addPlayer:(id:string)=>[playerInfo[],playerInfo],
+        removePlayer:(id:string)=>void
+    ){
+        this.io.on('connection',  (socket)=>{
             console.log(`user ${socket.id} connected`);
             socket.on('disconnect',  () => {
                 console.log(`user ${socket.id} disconnected`)
-                if(!this.board.model)
-                    throw new Error("un-initialized game manager")
-                this.board.model.removePlayer(socket.id);
+                removePlayer(socket.id)
                 socket.emit('playerDisconnect', socket.id);
                 // socket.disconnect()
             });
 
-            if(!this.board.model)
-                    throw new Error("un-initialized game manager")
-                
-            let newPlayer = this.board.model.addPlayer(socket.id);
+            socket.on('playerInput', (inputData)=>{
+                this.handlePlayerInput(socket.id, inputData);
+            });
+            
+            let [gameState, newPlayer] = addPlayer(socket.id);
+
             // send the players object to the new player
-            socket.emit('gameState', this.board.model.getGameState());
+            socket.emit('gameState', gameState);
             // update all other players of the new player
-            socket.broadcast.emit('newPlayer', newPlayer.getInfo());
+            socket.broadcast.emit('newPlayer', newPlayer);
+        });
+    }
+
+    handlePlayerInput(playerId:string, input:Input) {
+        if(!this.board.model)
+            throw new Error("no model")
+
+        this.board.model.players.forEach((player, id) => {
+            if (playerId === id) {
+                if(!this.board.model)
+                    throw new Error("no model")
+                let player = this.board.model.players.get(id)
+                if(!player)
+                    throw new Error("player not found at id: "+id)
+                player.input = input;
+            }
         });
     }
 }

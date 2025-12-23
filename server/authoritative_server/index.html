@@ -11,29 +11,30 @@
       </script>
     </head>
     <body>
-        <script type="text/javascript" src="dist/bundle.iife.js"></script>
+        <script type="text/javascript" src="./dist/bundle.iife.js"></script>
         <script>
-            // function loadScript(src, callback) {
-            //     let script = document.createElement('script');
-            //     script.src = src;
-            //     script.type = 'text/javascript';
-            //     script.async = true;
+            console.log("IN INDEX")
+            function loadScript(src, callback) {
+                let script = document.createElement('script');
+                script.src = src;
+                script.type = 'text/javascript';
+                script.async = true;
 
-            //     script.onload = () => {
-            //         if (callback && typeof callback === 'function') {
-            //             callback();
-            //         }
-            //         console.log(`${src} loaded successfully.`);
-            //     };
-            //     script.onerror = () => {
-            //         console.error(`Error loading script: ${src}`);
-            //     };
+                script.onload = () => {
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
+                    console.log(`${src} loaded successfully.`);
+                };
+                script.onerror = () => {
+                    console.error(`Error loading script: ${src}`);
+                };
 
-            //     document.head.appendChild(script);
-            // }
+                document.head.appendChild(script);
+            }
 
-            // loadScript('ts/game.ts', () => {
-            //     console.log('my-script.js is ready to use!');
+            // loadScript('ts/main.ts', () => {
+            //     console.log('main.ts is ready to use!');
             // });
         </script>
     </body>

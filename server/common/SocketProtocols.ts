@@ -1,13 +1,19 @@
 export type playerInfo = {
     x:number,
     y:number,
-    rot:number,
+    rotation:number,
     id:string,
     team:string
 }
 
-export type message = Array<message> | Object
+export type message = Array<any> | Object
 
 export interface Sendalbe{
     getInfo():message
+}
+
+export type Input = {
+    left:boolean,
+    right:boolean,
+    up:boolean
 }

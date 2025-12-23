@@ -1,6 +1,6 @@
 import {Board} from '../scenes/board'
 
-import {playerInfo, Sendalbe} from '../../../common/SocketProtocols'
+import {playerInfo, Sendalbe, Input} from '../../../common/SocketProtocols'
 
 
 const players:Map<string, Player> = new Map()
@@ -8,9 +8,11 @@ type playerRep = Phaser.Types.Physics.Arcade.ImageWithDynamicBody
 
 export class ModelManager{
     board:Board
+    players:Map<string, Player>
 
     constructor(board:Board){
         this.board = board;
+        this.players = players;
     }
 
     addPlayer(id:string):Player {
@@ -64,6 +66,7 @@ export class Player implements Sendalbe{
   rotation:number
   team:string
   rep:playerRep
+  input:Input
 
 
   constructor(id: string, x: number, y: number, rotation: number, rep:playerRep){
@@ -73,13 +76,18 @@ export class Player implements Sendalbe{
     this.rep = rep;
     this.rotation = rotation;
     this.team = (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
+    this.input = {
+        up:false,
+        left:false,
+        right:false
+    }
   }
 
   getInfo():playerInfo{
     return {
         x: this.x,
         y: this.y,
-        rot: this.rotation,
+        rotation: this.rotation,
         id: this.id,
         team: this.team
     }
