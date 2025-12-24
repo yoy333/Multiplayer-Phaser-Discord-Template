@@ -20,7 +20,7 @@ export class SocketServerManager{
             socket.on('disconnect',  () => {
                 console.log(`user ${socket.id} disconnected`)
                 removePlayer(socket.id)
-                socket.emit('playerDisconnect', socket.id);
+                this.io.emit('playerDisconnect', socket.id);
                 // socket.disconnect()
             });
 
