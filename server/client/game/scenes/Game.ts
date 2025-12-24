@@ -27,6 +27,7 @@ export class Game extends Scene{
     create ()
     {
         this.socket = io();
+        console.log(this.socket)
         this.playerGroup = this.add.group();
         this.players = new Map()
 

@@ -1,69 +1,68 @@
 import {Scene} from 'phaser'
 
-import { SocketServerManager } from '../managers/SocketServerManager'
 import {ModelManager} from '../managers/ModelManager'
+import { Server as SocketIOServer } from 'socket.io';
+import { Input } from '../../../common/SocketProtocols';
 
 export class Board extends Scene{
+    io:SocketIOServer
+
     constructor(){
         super('board')
+        this.io = window.io
     }
 
     preload(){
         
     }
 
-    playerGroup?: Phaser.Physics.Arcade.Group
-    socket?: SocketServerManager
     model?: ModelManager
 
     create() {
-        this.playerGroup = this.physics.add.group()
-
-        //@ts-ignore
-        this.socket = new SocketServerManager(this, window.io)
         this.model = new ModelManager(this)
-
-        this.socket.managePlayerEntryExits(
-            (id)=>{
-                if(!this.model)
-                    throw new Error("model manager undefined")
-
-                let newPlayer = this.model.addPlayer(id);
-
-                return [this.model.getGameState(), newPlayer.getInfo()]
-            },
-            (id)=>{
+        this.io.on('connection',  (socket)=>{
+            console.log(`user ${socket.id} connected`);
+            socket.on('disconnect',  () => {
+                console.log(`user ${socket.id} disconnected`)
                 if(!this.model)
                     throw new Error("un-initialized game manager")
-                this.model.removePlayer(id);
-            }
-        )
+                this.model.removePlayer(socket.id);
+                this.io.emit('playerDisconnect', socket.id);
+            });
+
+            socket.on('playerInput', (inputData)=>{
+                this.handlePlayerInput(socket.id, inputData);
+            });
+            
+            if(!this.model)
+                throw new Error("model manager undefined")
+
+            let newPlayer = this.model.addPlayer(socket.id);
+
+            let gameState = this.model.getGameState()
+            let info = newPlayer.getInfo()
+
+
+            // send the players object to the new player
+            socket.emit('gameState', gameState);
+            // update all other players of the new player
+            socket.broadcast.emit('newPlayer', info);
+        });
     }
 
     update(){
-        if(!this.model)
-            throw new Error("model not initialized")
-        this.model.players.forEach((player, id) => {
-            const input = player.input;
-            if (input.left) {
-                player.rep.setAngularVelocity(-300);
-            } else if (input.right) {
-                player.rep.setAngularVelocity(300);
-            } else {
-                player.rep.setAngularVelocity(0);
+        this.model?.updatePlayPos()
+        window.io.emit('playerUpdates', this.model?.getGameState());
+    }
+
+    handlePlayerInput(playerId:string, input:Input) {
+        this.model?.players.forEach((player, id) => {
+            if (playerId === id) {
+                let player = this.model?.players.get(id)
+                if(!player)
+                    throw new Error("player not found at id: "+id)
+                player.input = input;
             }
-            if (input.up) {
-                this.physics.velocityFromRotation(player.rotation + 1.5, 200, player.rep.body.acceleration);
-            } else {
-                player.rep.setAcceleration(0);
-            }
-            
-            player.x = player.rep.x;
-            player.y = player.rep.y;
-            player.rotation = player.rep.rotation;
         });
-        this.physics.world.wrap(this.model.players, 5);
-        //@ts-ignore
-        window.io.emit('playerUpdates', this.model.getGameState());
     }
 } 

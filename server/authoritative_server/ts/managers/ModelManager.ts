@@ -9,10 +9,12 @@ type playerRep = Phaser.Types.Physics.Arcade.ImageWithDynamicBody
 export class ModelManager{
     board:Board
     players:Map<string, Player>
+    playerGroup:Phaser.Physics.Arcade.Group
 
     constructor(board:Board){
         this.board = board;
         this.players = players;
+        this.playerGroup = this.board.physics.add.group()
     }
 
     addPlayer(id:string):Player {
@@ -31,7 +33,7 @@ export class ModelManager{
         let newPlayer = new Player(id,  x, y, rotation, playerRep)
 
         players.set(id, newPlayer)
-        this.board.playerGroup?.add(newPlayer.rep)
+        this.playerGroup.add(newPlayer.rep)
 
 
         return newPlayer;
@@ -41,7 +43,7 @@ export class ModelManager{
         //destroy object in phaser
         players.forEach((player) => {
             if (player.id === id) {
-                this.board.playerGroup?.remove(player.rep)
+                this.playerGroup.remove(player.rep)
                 player.rep.destroy();
             }
         });
@@ -56,6 +58,34 @@ export class ModelManager{
             arr.push(p.getInfo())
         })
         return arr;
+    }
+
+    matchPosFromRep(){
+        this.players.forEach((player)=>{
+            player.x = player.rep.x;
+            player.y = player.rep.y;
+            player.rotation = player.rep.rotation;
+        })
+    }
+
+    updatePlayPos(){
+        this.players.forEach((player) => {
+            const input = player.input;
+            if (input.left) {
+                player.rep.setAngularVelocity(-300);
+            } else if (input.right) {
+                player.rep.setAngularVelocity(300);
+            } else {
+                player.rep.setAngularVelocity(0);
+            }
+            if (input.up) {
+                this.board.physics.velocityFromRotation(player.rotation + 1.5, 200, player.rep.body.acceleration);
+            } else {
+                player.rep.setAcceleration(0);
+            }
+        });
+        this.board.physics.world.wrap(this.playerGroup, 5);
+        this.matchPosFromRep()
     }
 }
 
