@@ -7,6 +7,9 @@ import { Game as MainGame } from './scenes/Game.js';
 import { MainMenu } from './scenes/MainMenu.js';
 import { Preloader } from './scenes/Preloader.js';
 
+import { initiateDiscordSDK, discordSdk } from '../utils/discordSdk';
+
+initiateDiscordSDK();
 
 var config : Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
