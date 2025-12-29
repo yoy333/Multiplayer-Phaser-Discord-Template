@@ -2,11 +2,12 @@ import { Scene } from 'phaser';
 import io, {type Socket} from 'socket.io-client'
 import {playerInfo} from '../../../common/SocketProtocols'
 import { ClientModelManager } from '../managers/ClientModelManager';
-
+import {InputManager} from '../managers/InputManager'
 export class Game extends Scene{
 
     socket?: typeof Socket;
     model?: ClientModelManager;
+    keys?: InputManager
 
     constructor ()
     {
@@ -16,13 +17,6 @@ export class Game extends Scene{
     preload(){
         
     }
-
-
-    cursors?:Phaser.Types.Input.Keyboard.CursorKeys
-    leftKeyPressed = false
-    rightKeyPressed = false
-    upKeyPressed = false
-
 
     create ()
     {
@@ -54,41 +48,17 @@ export class Game extends Scene{
             this.model?.updateAllPos(players)
         });
 
-        if(!this.input.keyboard)
-            throw new Error("no keyboard detected")
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-        this.leftKeyPressed = false;
-        this.rightKeyPressed = false;
-        this.upKeyPressed = false;
+        this.keys = new InputManager(this.input)
     }
 
     update(){
-        const left = this.leftKeyPressed;
-        const right = this.rightKeyPressed;
-        const up = this.upKeyPressed;
-
-        if(!this.cursors)
-            throw new Error("no cursors")
-
-        if (this.cursors.left.isDown) {
-            this.leftKeyPressed = true;
-        } else if (this.cursors.right.isDown) {
-            this.rightKeyPressed = true;
-        } else {
-            this.leftKeyPressed = false;
-            this.rightKeyPressed = false;
-        }
-        if (this.cursors.up.isDown) {
-            this.upKeyPressed = true;
-        } else {
-            this.upKeyPressed = false;
-        }
+        let inputs = this.keys?.getInputs()
 
         if(!this.socket)
             throw new Error("no socket")
 
-        if (left !== this.leftKeyPressed || right !== this.rightKeyPressed || up !== this.upKeyPressed)
-            this.socket.emit('playerInput', { left: this.leftKeyPressed , right: this.rightKeyPressed, up: this.upKeyPressed });
+        if(this.keys?.didInputChange())
+            this.socket.emit('playerInput', inputs);
+
     }
 }
