@@ -49,7 +49,7 @@ app.post("/api/token", async (req, res) => {
 
 // Serve game-specific assets from `/game/*`
 const distDir = path.join(__dirname, 'client/dist');
-const gameAssetsDir = path.join(__dirname, 'client/game/scenes/assets');
+const gameAssetsDir = path.join(__dirname, 'client/game/assets');
 
 app.use('/phaserAssets', express.static(gameAssetsDir));
 
