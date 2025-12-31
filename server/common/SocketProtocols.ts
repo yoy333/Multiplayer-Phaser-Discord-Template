@@ -1,4 +1,4 @@
-export type playerInfo = {
+export type PlayerInfo = {
     x:number,
     y:number,
     rotation:number,

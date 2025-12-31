@@ -1,5 +1,5 @@
 import {GameObjects} from 'phaser'
-import { playerInfo } from '../../../common/SocketProtocols'
+import { PlayerInfo } from '../../../common/SocketProtocols'
 
 type addPlugin = GameObjects.GameObjectFactory
 
@@ -13,7 +13,7 @@ export class ClientModelManager{
         this.players = new Map()
     }
 
-    addAllPlayers(add:addPlugin, players:playerInfo[], selfId:string){
+    addAllPlayers(add:addPlugin, players:PlayerInfo[], selfId:string){
         players.forEach( (player, id)=>{
             if (player.id === selfId) {
                 this.addPlayer(add, player, 'ship');
@@ -23,7 +23,7 @@ export class ClientModelManager{
         });
     }
 
-    addPlayer(add:addPlugin, playerI:playerInfo, sprite:string) {
+    addPlayer(add:addPlugin, playerI:PlayerInfo, sprite:string) {
         const player = add.image(playerI.x, playerI.y, sprite)
          .setOrigin(0.5, 0.5).setDisplaySize(53, 40);
         
@@ -48,7 +48,7 @@ export class ClientModelManager{
         });
     }
 
-    updateAllPos(players: playerInfo[]){
+    updateAllPos(players: PlayerInfo[]){
         players.forEach( (info)=>{
             this.players.forEach(function (player, id) {
                 if (info.id === id) {

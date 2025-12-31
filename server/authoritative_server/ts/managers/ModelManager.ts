@@ -1,6 +1,6 @@
 import {Board} from '../scenes/board'
 
-import {playerInfo, Sendalbe, Input} from '../../../common/SocketProtocols'
+import {PlayerInfo, Sendalbe, Input} from '../../../common/SocketProtocols'
 
 
 const players:Map<string, Player> = new Map()
@@ -52,8 +52,8 @@ export class ModelManager{
         players.delete(id);
     }
 
-    getGameState():playerInfo[]{
-        let arr:playerInfo[] = []
+    getGameState():PlayerInfo[]{
+        let arr:PlayerInfo[] = []
         players.forEach(p=>{
             arr.push(p.getInfo())
         })
@@ -113,7 +113,7 @@ export class Player implements Sendalbe{
     }
   }
 
-  getInfo():playerInfo{
+  getInfo():PlayerInfo{
     return {
         x: this.x,
         y: this.y,

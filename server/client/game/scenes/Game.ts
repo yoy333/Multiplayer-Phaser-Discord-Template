@@ -1,6 +1,6 @@
 import { Scene } from 'phaser';
 import io, {type Socket} from 'socket.io-client'
-import {playerInfo} from '../../../common/SocketProtocols'
+import {PlayerInfo} from '../../../common/SocketProtocols'
 import { ClientModelManager } from '../managers/ClientModelManager';
 import {InputManager} from '../managers/InputManager'
 export class Game extends Scene{
@@ -24,13 +24,13 @@ export class Game extends Scene{
 
         this.socket = io();
 
-        this.socket.on('gameState',  (players:playerInfo[]) => {
+        this.socket.on('gameState',  (players:PlayerInfo[]) => {
             if(!this.socket)
                 throw new Error("no socket :(")
             this.model?.addAllPlayers(this.add, players, this.socket?.id)
         });
 
-        this.socket.on('newPlayer', (player:playerInfo)=>{
+        this.socket.on('newPlayer', (player:PlayerInfo)=>{
             this.model?.addPlayer(this.add, player, 'otherPlayer');
         });
         this.socket.on('playerDisconnect',  (id:string)=>{
@@ -44,7 +44,7 @@ export class Game extends Scene{
 
         });
 
-        this.socket.on('playerUpdates',  (players:playerInfo[])=>{
+        this.socket.on('playerUpdates',  (players:PlayerInfo[])=>{
             this.model?.updateAllPos(players)
         });
 
