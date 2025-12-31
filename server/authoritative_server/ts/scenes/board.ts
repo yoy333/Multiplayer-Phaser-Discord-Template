@@ -3,13 +3,14 @@ import {Scene} from 'phaser'
 import {ModelManager} from '../managers/ModelManager'
 import { Server as SocketIOServer } from 'socket.io';
 import { Input } from '../../../common/SocketProtocols';
+import {io} from '../main'
 
 export class Board extends Scene{
     io:SocketIOServer
 
     constructor(){
         super('board')
-        this.io = window.io
+        this.io = io
     }
 
     preload(){

@@ -2,15 +2,6 @@ import Phaser, { Physics } from 'phaser'
 import { Server as SocketIOServer } from 'socket.io';
 import {Board} from './scenes/board'
 
-// defined in index.js
-declare global {
-  interface Window {
-    gameLoaded: () => void;
-    io: SocketIOServer;
-  }
-}
-
-//const io = new SocketIOServer(window.server);
 const config : Phaser.Types.Core.GameConfig = {
   autoFocus: false,
   type: Phaser.HEADLESS,
@@ -32,3 +23,15 @@ const config : Phaser.Types.Core.GameConfig = {
 const game = new Phaser.Game(config);
 
 window.gameLoaded();
+
+// defined in index.js
+declare global {
+  interface Window {
+    gameLoaded: () => void;
+    io: SocketIOServer;
+  }
+}
+
+let io = window.io
+
+export {io}
